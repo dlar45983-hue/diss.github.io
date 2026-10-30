@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Мой первый сайт — пример на чистом HTML</title>
+<meta name="description" content="Пример одностраничного сайта на чистом HTML, CSS и JavaScript: шапка, секции, карточки проектов и форма обратной связи.">
+
+<!-- Шрифты с поддержкой кириллицы -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   ДИЗАЙН-ТОКЕНЫ: цвета, шрифты, отступы собраны в одном месте.
+   Меняя значения здесь, ты меняешь весь сайт.
+   ============================================================ */
+:root{
+  /* Цвета: тёплая «бумажная» палитра */
+  --paper:   #faf8f1;  /* основной фон */
+  --paper-2: #f2eee1;  /* фон карточек и подложек */
+  --ink:     #2b2924;  /* основной текст (не чисто чёрный) */
+  --ink-2:   #6e685b;  /* приглушённый текст */
+  --line:    #e2dccb;  /* тонкие линии-разделители */
+  --clay:    #a05a38;  /* акцент: терракота */
+
+  /* Шрифты: сериф для заголовков + гротеск для текста */
+  --serif: "Playfair Display", Georgia, serif;
+  --sans:  "Golos Text", -apple-system, "Segoe UI", sans-serif;
+
+  --radius: 12px;
+  --wrap: 1120px;
+}
+
+*{ box-sizing: border-box; margin: 0; padding: 0; }
+html{ scroll-behavior: smooth; }
+
+body{
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg{ max-width: 100%; display: block; }
+a{ color: var(--clay); }
+:focus-visible{ outline: 2px solid var(--clay); outline-offset: 3px; border-radius: 4px; }
+button{ cursor: pointer; font: inherit; }
+
+/* Уважение к настройке «уменьшить движение» */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  *, *::before, *::after{ animation: none !important; transition: none !important; }
+}
+
+/* Ограничитель ширины контента */
+.wrap{ max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+
+/* ============================================================
+   ШАПКА
+   ============================================================ */
+.site-header{
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.site-header .wrap{
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 68px; gap: 16px;
+}
+.wordmark{
+  font-family: var(--serif); font-weight: 700; font-size: 20px;
+  letter-spacing: .02em; color: var(--ink); text-decoration: none;
+}
+.wordmark span{ color: var(--clay); }
+
+.nav{ display: flex; gap: 4px; list-style: none; }
+.nav a{
+  display: inline-block; padding: 10px 14px; min-height: 44px;
+  color: var(--ink-2); text-decoration: none; font-size: 15px;
+  border-radius: 8px; transition: color .2s ease, background-color .2s ease;
+}
+.nav a:hover{ color: var(--ink); background: var(--paper-2); }
+
+/* Кнопка меню на мобильных (скрыта на десктопе) */
+.menu-toggle{
+  display: none; border: 1px solid var(--line); background: none;
+  border-radius: 8px; padding: 10px 12px; min-height: 44px; color: var(--ink);
+}
+
+/* ============================================================
+   ГЛАВНЫЙ ЭКРАН (HERO)
+   ============================================================ */
+.hero{ padding: 96px 0 88px; border-bottom: 1px solid var(--line); }
+.hero .kicker{
+  font-size: 13px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 24px;
+}
+.hero h1{
+  font-family: var(--serif); font-weight: 600;
+  font-size: clamp(38px, 6.4vw, 76px); line-height: 1.08;
+  letter-spacing: -0.01em; max-width: 14ch;
+}
+.hero h1 em{ font-style: italic; color: var(--clay); }
+.hero .lead{
+  margin-top: 28px; max-width: 58ch; font-size: 18px; color: var(--ink-2);
+}
+.hero .actions{ margin-top: 36px; display: flex; gap: 24px; flex-wrap: wrap; }
+
+/* Кнопки-ссылки: основная и текстовая */
+.btn{
+  display: inline-flex; align-items: center; min-height: 48px;
+  padding: 12px 26px; border-radius: 999px;
+  background: var(--ink); color: var(--paper);
+  text-decoration: none; font-weight: 500;
+  transition: transform .2s ease, background-color .2s ease;
+}
+.btn:hover{ background: var(--clay); transform: translateY(-2px); }
+.btn:active{ transform: translateY(0); }
+.btn-text{
+  align-self: center; color: var(--ink); font-weight: 500;
+  text-decoration: underline; text-decoration-color: var(--line);
+  text-underline-offset: 5px; transition: text-decoration-color .2s ease;
+}
+.btn-text:hover{ text-decoration-color: var(--clay); }
+
+/* ============================================================
+   СЕКЦИИ
+   ============================================================ */
+.section{ padding: 88px 0; border-bottom: 1px solid var(--line); }
+.section-head{
+  display: flex; align-items: baseline; gap: 20px; margin-bottom: 48px;
+}
+.section-head .num{
+  font-family: var(--serif); font-style: italic; color: var(--clay); font-size: 18px;
+}
+.section-head h2{
+  font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 4vw, 42px);
+}
+.section-head .rule{ flex: 1; height: 1px; background: var(--line); }
+
+/* Двухколоночная секция «О сайте» */
+.about{ display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; }
+.about p{ color: var(--ink-2); margin-bottom: 1.1em; max-width: 62ch; }
+.about p strong{ color: var(--ink); font-weight: 600; }
+.about figure{
+  background: var(--paper-2); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 28px;
+}
+.about figcaption{
+  margin-top: 14px; font-size: 13px; color: var(--ink-2); text-align: center;
+}
+
+/* Карточки проектов */
+.cards{
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; list-style: none;
+}
+.card{
+  border: 1px solid var(--line); border-radius: var(--radius);
+  overflow: hidden; background: #fffdf8;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.card:hover{ border-color: var(--clay); transform: translateY(-4px); }
+.card .cover{ overflow: hidden; aspect-ratio: 4 / 3; background: var(--paper-2); }
+.card .cover svg{
+  width: 100%; height: 100%;
+  transition: transform .45s cubic-bezier(.2,.7,.2,1);
+}
+.card:hover .cover svg{ transform: scale(1.06); } /* плавный зум картинки */
+.card .body{ padding: 20px 22px 24px; }
+.card h3{
+  font-family: var(--serif); font-weight: 600; font-size: 21px; margin-bottom: 8px;
+}
+.card p{ font-size: 15px; color: var(--ink-2); }
+.card .tag{
+  display: inline-block; margin-top: 14px; font-size: 12px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--clay);
+}
+
+/* Контакты: две колонки — текст и форма */
+.contact{ display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
+.contact p{ color: var(--ink-2); max-width: 52ch; }
+.contact .mail{
+  display: inline-block; margin-top: 18px; font-size: 19px;
+  font-family: var(--serif); font-weight: 600;
+}
+
+.form{ display: grid; gap: 16px; }
+.field label{
+  display: block; font-size: 13px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-2); margin-bottom: 6px;
+}
+.field input, .field textarea{
+  width: 100%; padding: 12px 14px; font: inherit; color: var(--ink);
+  background: #fffdf8; border: 1px solid var(--line); border-radius: 8px;
+  transition: border-color .2s ease;
+}
+.field input:focus, .field textarea:focus{
+  outline: none; border-color: var(--clay);
+}
+.field textarea{ min-height: 120px; resize: vertical; }
+.form-note{ font-size: 14px; color: var(--ink-2); }
+.form-status{ font-size: 15px; min-height: 1.5em; }
+.form-status.ok{ color: #4a7a3f; }
+.form-status.err{ color: #b03a2e; }
+
+/* ============================================================
+   ПОДВАЛ
+   ============================================================ */
+.site-footer{ padding: 48px 0 56px; }
+.site-footer .wrap{
+  display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+}
+.site-footer small{ color: var(--ink-2); }
+.top-link{
+  color: var(--ink-2); text-decoration: none; font-size: 14px;
+  padding: 10px 0; min-height: 44px; display: inline-block;
+}
+.top-link:hover{ color: var(--clay); }
+
+/* ============================================================
+   ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ (класс добавляет JS)
+   ============================================================ */
+.reveal{ opacity: 0; transform: translateY(24px); }
+.reveal.visible{
+  opacity: 1; transform: none;
+  transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+}
+
+/* ============================================================
+   АДАПТИВНОСТЬ
+   ============================================================ */
+@media (max-width: 860px){
+  .about, .contact{ grid-template-columns: 1fr; gap: 40px; }
+  .cards{ grid-template-columns: 1fr; }
+}
+@media (max-width: 720px){
+  .menu-toggle{ display: inline-flex; align-items: center; gap: 8px; }
+  .nav{
+    display: none; position: absolute; top: 68px; left: 0; right: 0;
+    flex-direction: column; padding: 8px 24px 16px;
+    background: var(--paper); border-bottom: 1px solid var(--line);
+  }
+  .nav.open{ display: flex; }
+  .nav a{ display: block; }
+  .hero{ padding: 64px 0; }
+  .section{ padding: 64px 0; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= ШАПКА С НАВИГАЦИЕЙ ================= -->
+<header class="site-header">
+  <div class="wrap">
+    <a class="wordmark" href="#top">мой<span>.</span>сайт</a>
+
+    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mainNav">
+      Меню
+    </button>
+
+    <nav>
+      <ul class="nav" id="mainNav">
+        <li><a href="#about">О сайте</a></li>
+        <li><a href="#works">Проекты</a></li>
+        <li><a href="#contacts">Контакты</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================= ГЛАВНЫЙ ЭКРАН ================= -->
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker">Пример сайта на чистом HTML</p>
+      <h1>Привет! Это мой <em>первый</em> сайт</h1>
+      <p class="lead">
+        Эта страница собрана в одном файле <code>index.html</code>: разметка, стили
+        и скрипты лежат рядом и снабжены комментариями. Открой файл в редакторе —
+        и увидишь, как всё устроено.
+      </p>
+      <div class="actions">
+        <a class="btn" href="#works">Смотреть проекты</a>
+        <a class="btn-text" href="#about">Как это устроено</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= О САЙТЕ ================= -->
+  <section class="section" id="about">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="num">01</span>
+        <h2>Из чего состоит страница</h2>
+        <span class="rule"></span>
+      </div>
+
+      <div class="about">
+        <div class="reveal">
+          <p><strong>HTML</strong> — это скелет: заголовки, абзацы, ссылки и секции.
+             Он говорит браузеру, <em>что</em> на странице.</p>
+          <p><strong>CSS</strong> — это внешний вид: цвета, шрифты, отступы и сетка.
+             Все стили этой страницы лежат в теге <code>&lt;style&gt;</code> в начале файла.</p>
+          <p><strong>JavaScript</strong> — это поведение: меню на телефоне, плавное
+             появление секций и проверка формы. Скрипт — внизу страницы.</p>
+          <p>Чтобы показать сайт миру, достаточно загрузить этот один файл
+             на любой статический хостинг.</p>
+        </div>
+
+        <figure class="reveal">
+          <!-- Картинка нарисована кодом (SVG): не нужны внешние файлы -->
+          <svg viewBox="0 0 400 300" role="img" aria-label="Абстрактная композиция из ваз">
+            <rect width="400" height="300" fill="#f2eee1"/>
+            <circle cx="320" cy="60" r="90" fill="#e8dfc9"/>
+            <path d="M110 90 q-28 60 0 110 q14 22 36 22 q22 0 36 -22 q28 -50 0 -110 q-14 -18 -36 -18 q-22 0 -36 18z" fill="#a05a38"/>
+            <rect x="136" y="52" width="20" height="44" rx="8" fill="#a05a38"/>
+            <path d="M240 140 q-20 44 0 80 q10 16 26 16 q16 0 26 -16 q20 -36 0 -80 q-10 -14 -26 -14 q-16 0 -26 14z" fill="#2b2924"/>
+            <rect x="258" y="112" width="14" height="32" rx="6" fill="#2b2924"/>
+            <line x1="40" y1="260" x2="360" y2="260" stroke="#2b2924" stroke-width="2"/>
+          </svg>
+          <figcaption>Иллюстрация — обычный SVG прямо в разметке</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ПРОЕКТЫ ================= -->
+  <section class="section" id="works">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="num">02</span>
+        <h2>Проекты</h2>
+        <span class="rule"></span>
+      </div>
+
+      <ul class="cards">
+        <li class="card reveal">
+          <div class="cover">
+            <svg viewBox="0 0 400 300" role="img" aria-label="Обложка проекта: восход солнца">
+              <rect width="400" height="300" fill="#e8dfc9"/>
+              <circle cx="200" cy="200" r="90" fill="#a05a38"/>
+              <rect x="0" y="200" width="400" height="100" fill="#f2eee1"/>
+              <line x1="60" y1="232" x2="340" y2="232" stroke="#2b2924" stroke-width="2"/>
+              <line x1="100" y1="256" x2="300" y2="256" stroke="#6e685b" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="body">
+            <h3>Страница-визитка</h3>
+            <p>Одна секция с именем, парой фраз о себе и ссылками на соцсети. Отличное первое упражнение.</p>
+            <span class="tag">HTML · CSS</span>
+          </div>
+        </li>
+
+        <li class="card reveal">
+          <div class="cover">
+            <svg viewBox="0 0 400 300" role="img" aria-label="Обложка проекта: окно браузера">
+              <rect width="400" height="300" fill="#f2eee1"/>
+              <rect x="60" y="60" width="280" height="180" rx="10" fill="#fffdf8" stroke="#2b2924" stroke-width="2"/>
+              <circle cx="84" cy="82" r="5" fill="#a05a38"/>
+              <circle cx="102" cy="82" r="5" fill="#e2dccb"/>
+              <circle cx="120" cy="82" r="5" fill="#e2dccb"/>
+              <rect x="84" y="110" width="150" height="12" rx="6" fill="#2b2924"/>
+              <rect x="84" y="136" width="220" height="8" rx="4" fill="#e2dccb"/>
+              <rect x="84" y="154" width="190" height="8" rx="4" fill="#e2dccb"/>
+              <rect x="84" y="186" width="96" height="26" rx="13" fill="#a05a38"/>
+            </svg>
+          </div>
+          <div class="body">
+            <h3>Лендинг продукта</h3>
+            <p>Экран с оффером, блок преимуществ и кнопка действия. Учит работать с сеткой и ритмом.</p>
+            <span class="tag">HTML · CSS</span>
+          </div>
+        </li>
+
+        <li class="card reveal">
+          <div class="cover">
+            <svg viewBox="0 0 400 300" role="img" aria-label="Обложка проекта: график">
+              <rect width="400" height="300" fill="#2b2924"/>
+              <polyline points="60,230 130,170 200,195 270,120 340,80" fill="none" stroke="#a05a38" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="130" cy="170" r="6" fill="#faf8f1"/>
+              <circle cx="270" cy="120" r="6" fill="#faf8f1"/>
+              <line x1="60" y1="250" x2="340" y2="250" stroke="#6e685b" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="body">
+            <h3>Интерактивный виджет</h3>
+            <p>Счётчик, слайдер или мини-игра — первое знакомство с JavaScript и событиями.</p>
+            <span class="tag">HTML · CSS · JS</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= КОНТАКТЫ ================= -->
+  <section class="section" id="contacts">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="num">03</span>
+        <h2>Контакты</h2>
+        <span class="rule"></span>
+      </div>
+
+      <div class="contact">
+        <div class="reveal">
+          <p>Хочешь обменяться опытом или задать вопрос о том, как сделан этот
+             сайт? Напиши — всегда рад обратной связи.</p>
+          <a class="mail" href="mailto:hello@example.com">hello@example.com</a>
+        </div>
+
+        <!-- Форма: без бэкенда данные никуда не отправляются,
+             скрипт ниже просто показывает подтверждение -->
+        <form class="form reveal" id="contactForm" novalidate>
+          <div class="field">
+            <label for="name">Имя</label>
+            <input id="name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="email">Почта</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="message">Сообщение</label>
+            <textarea id="message" name="message" required></textarea>
+          </div>
+          <button class="btn" type="submit">Отправить</button>
+          <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+          <p class="form-note">Это учебная форма: данные не покидают браузер.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= ПОДВАЛ ================= -->
+<footer class="site-footer">
+  <div class="wrap">
+    <small>© <span id="year">2026</span> Мой первый сайт. Сделано в одном файле index.html</small>
+    <a class="top-link" href="#top">Наверх ↑</a>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   JAVASCRIPT: вся интерактивность страницы
+   ============================================================ */
+
+/* 1. Мобильное меню: кнопка «Меню» показывает/прячет навигацию */
+const toggle = document.getElementById('menuToggle');
+const nav = document.getElementById('mainNav');
+
+toggle.addEventListener('click', () => {
+  const open = nav.classList.toggle('open');
+  toggle.setAttribute('aria-expanded', String(open));
+});
+
+/* Закрываем меню после перехода по ссылке */
+nav.addEventListener('click', (event) => {
+  if (event.target.closest('a')) {
+    nav.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+});
+
+/* 2. Плавное появление секций при скролле.
+      IntersectionObserver следит, когда блок попадает в экран. */
+const revealObserver = new IntersectionObserver((entries) => {
+  for (const entry of entries) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  }
+}, { threshold: 0.12 });
+
+/* Если пользователь просил уменьшить движение — просто показываем всё */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.querySelectorAll('.reveal').forEach((el) => {
+  if (reduceMotion) el.classList.add('visible');
+  else revealObserver.observe(el);
+});
+
+/* 3. Учебная форма: проверка полей и подтверждение без сервера */
+const form = document.getElementById('contactForm');
+const status = document.getElementById('formStatus');
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault(); // не перезагружаем страницу
+
+  const data = new FormData(form);
+  const name = String(data.get('name') || '').trim();
+  const email = String(data.get('email') || '').trim();
+  const message = String(data.get('message') || '').trim();
+
+  if (!name || !email || !message) {
+    status.textContent = 'Заполни все поля, пожалуйста.';
+    status.className = 'form-status err';
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    status.textContent = 'Похоже, в адресе почты опечатка.';
+    status.className = 'form-status err';
+    return;
+  }
+
+  status.textContent = `Спасибо, ${name}! Сообщение «отправлено» — в учебной форме оно просто остаётся в браузере.`;
+  status.className = 'form-status ok';
+  form.reset();
+});
+
+/* 4. Текущий год в подвале */
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
